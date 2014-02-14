@@ -1,5 +1,6 @@
 var express = require('express');
 var socket = require('socket.io');
+var path = require('path');
 var app = express();
 var server = require('http').createServer(app);
 var io = socket.listen(server);
@@ -7,8 +8,12 @@ var io = socket.listen(server);
 server.listen(process.env.PORT);
 
 app.get('/', function (req, res) {
-  res.sendfile(__dirname + '/public/index.html');
+  res.sendfile(__dirname + '/public/');
 });
+
+app.use('/img',express.static(path.join(__dirname, 'public/img')));
+app.use('/js',express.static(path.join(__dirname, 'public/js')));
+app.use('/css',express.static(path.join(__dirname, 'public/css')));
 
 io.sockets.on('connection', function(client) {
   console.log('Client connected...');
