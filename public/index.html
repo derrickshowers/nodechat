@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<head>
+  <title>nodechat - prototype by derrickshowers</title>
+  <script src="/socket.io/socket.io.js" ></script>
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  
+  <script>
+
+    // check url to serve correct server url
+    var serverAddress;
+    if (document.URL.indexOf('localhost') > 0) {
+      serverAddress = 'http://localhost:8080';
+    } else {
+      serverAddress = 'http://dsnodechat.herokuapp.com/'; 
+    }
+    var server = io.connect(serverAddress);
+ 
+    // DOM manipulation
+    var insertText = function(text) {
+      
+      var newText = document.createElement('tr');
+      newText.innerHTML = '<td>' + text + '</td>';
+
+      var allText = document.getElementsByTagName('tbody')[0];
+      return allText.appendChild(newText);
+
+    }
+
+    server.on('text', function(data) {
+      console.log('server.on callback called');
+      insertText(data);
+    });
+
+  </script>
+</head>
+
+<body>
+  <br />
+  <div class="row">
+    <div class="col-xs-10 col-md-4 col-md-offset-3">
+      <input id="name" class="form-control" name="name" placeholder="Who are you?" />
+    </div>
+    <div class="col-xs-2">
+      <button id="sendname" class="btn btn-primary pull-right" type="submit">Chat it up.</button>
+    </div>
+    <div class="col-xs-10 col-md-4 col-md-offset-3">
+      <input id="message" class="form-control" name="message" placeholder="Enter your message" />
+    </div>
+    <div class="col-xs-2">
+      <button id="sendmsg" class="btn btn-primary pull-right" type="submit">Send it away!</button>
+    </div>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <table class="table table-striped"><tbody></tbody></table> 
+    </div>
+  </div>
+  
+  <script>
+
+    // Hide the chat options on page load
+    document.getElementById('message').style.display = 'none';
+    document.getElementById('sendmsg').style.display = 'none';
+
+    // List for submit on name
+    document.getElementById('sendname').addEventListener('click', function(e) {
+      var name = document.getElementById('name').value;
+      server.emit('name', name);
+      document.getElementById('message').style.display = 'inline-block';
+      document.getElementById('sendmsg').style.display = 'inline-block';
+      document.getElementById('sendname').style.display = 'none';
+      document.getElementById('name').style.display = 'none';
+    });
+
+    // Listen for submit on sending message
+    document.getElementById('sendmsg').addEventListener('click', function(e) {
+      var messageText = document.getElementById('message').value;
+      server.emit('text', messageText);
+      insertText('Me: ' + messageText);
+      document.getElementById('message').value = "";
+    });
+
+  </script>
+
+</body>
+
+</html>
