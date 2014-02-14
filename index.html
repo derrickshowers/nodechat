@@ -25,26 +25,42 @@
 
     server.on('text', function(data) {
       console.log('server.on callback called');
-      insertText('Someone else: ' + data);
+      insertText(data);
     });
 
   </script>
 </head>
 
 <body>
-  <input name="message" placeholder="Enter your message"/>
-  <button type="submit">Send it away!</button>
+  <input id="name" name="name" placeholder="Who are you?" />
+  <button id="sendname" type="submit">Chat it up.</button>
+  <input id="message" name="message" placeholder="Enter your message" />
+  <button id="sendmsg" type="submit">Send it away!</button>
   
   <ul></ul>
+  
   <script>
-    
-    // Listen for submit
-    document.getElementsByTagName('button')[0].addEventListener('click', function(e) {
-      e.preventDefault();
-      var messageText = document.getElementsByTagName('input')[0].value;
+
+    // Hide the chat options on page load
+    document.getElementById('message').style.display = 'none';
+    document.getElementById('sendmsg').style.display = 'none';
+
+    // List for submit on name
+    document.getElementById('sendname').addEventListener('click', function(e) {
+      var name = document.getElementById('name').value;
+      server.emit('name', name);
+      document.getElementById('message').style.display = 'inline-block';
+      document.getElementById('sendmsg').style.display = 'inline-block';
+      document.getElementById('sendname').style.display = 'none';
+      document.getElementById('name').style.display = 'none';
+    });
+
+    // Listen for submit on sending message
+    document.getElementById('sendmsg').addEventListener('click', function(e) {
+      var messageText = document.getElementById('message').value;
       server.emit('text', messageText);
       insertText('Me: ' + messageText);
-      document.getElementsByTagName('input')[0].value = "";
+      document.getElementById('message').value = "";
     });
 
   </script>
