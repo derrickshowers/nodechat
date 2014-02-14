@@ -8,7 +8,7 @@ var io = socket.listen(server);
 server.listen(process.env.PORT);
 
 app.get('/', function (req, res) {
-  res.sendfile(__dirname + '/index.html');
+  res.sendfile('/public/index.html');
 });
 
 app.use('/img',express.static(path.join(__dirname, 'public/img')));
