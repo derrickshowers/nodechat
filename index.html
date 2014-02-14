@@ -1,0 +1,45 @@
+<head>
+  <title>Little node.js chat test</title>
+  <script src="/socket.io/socket.io.js" ></script>
+  <script>
+    var server = io.connect('http://derrick-mbp.local:8080');
+ 
+    // DOM manipulation
+    var insertText = function(text) {
+      
+      var newText = document.createElement('li');
+      newText.innerHTML = text;
+
+      var allText = document.getElementsByTagName('ul')[0];
+      return allText.appendChild(newText);
+
+    }
+
+    server.on('text', function(data) {
+      console.log('server.on callback called');
+      insertText(data);
+    });
+
+  </script>
+</head>
+
+<body>
+  <input name="message" placeholder="Enter your message"/>
+  <button type="submit">Send it away!</button>
+  
+  <ul></ul>
+  <script>
+    
+    // Listen for submit
+    document.getElementsByTagName('button')[0].addEventListener('click', function(e) {
+      e.preventDefault();
+      var messageText = document.getElementsByTagName('input')[0].value;
+      server.emit('text', messageText);
+      document.getElementsByTagName('input')[0].value = "";
+    });
+
+  </script>
+
+</body>
+
+</html>
