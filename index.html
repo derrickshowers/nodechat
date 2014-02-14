@@ -2,7 +2,7 @@
   <title>Little node.js chat test</title>
   <script src="/socket.io/socket.io.js" ></script>
   <script>
-    var server = io.connect('http://derrick-mbp.local:8080');
+    var server = io.connect('http://localhost:8080');
  
     // DOM manipulation
     var insertText = function(text) {
@@ -17,7 +17,7 @@
 
     server.on('text', function(data) {
       console.log('server.on callback called');
-      insertText(data);
+      insertText('Someone else: ' + data);
     });
 
   </script>
@@ -35,6 +35,7 @@
       e.preventDefault();
       var messageText = document.getElementsByTagName('input')[0].value;
       server.emit('text', messageText);
+      insertText('Me: ' + messageText);
       document.getElementsByTagName('input')[0].value = "";
     });
 
