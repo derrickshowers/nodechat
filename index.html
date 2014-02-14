@@ -2,7 +2,15 @@
   <title>Little node.js chat test</title>
   <script src="/socket.io/socket.io.js" ></script>
   <script>
-    var server = io.connect('http://dsnodechat.herokuapp.com/');
+
+    // check url to serve correct server url
+    var serverAddress;
+    if (document.URL.indexOf('localhost') > 0) {
+      serverAddress = 'http://localhost:8080';
+    } else {
+      serverAddress = 'http://dsnodechat.herokuapp.com/'; 
+    }
+    var server = io.connect(serverAddress);
  
     // DOM manipulation
     var insertText = function(text) {
