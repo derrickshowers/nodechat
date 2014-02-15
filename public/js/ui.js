@@ -31,31 +31,6 @@
 
   }
 
-  // hide this element
-  var hide = function() {
-    for(var i=0; i<arguments.length; i++) {
-      document.getElementById(arguments[i]).style.display = 'none'
-      document.getElementById(arguments[i]).setAttribute('data-active', 'false');
-    }
-  }
-
-  // show this element
-  var show = function() {
-    for(var i=0; i<arguments.length; i++) {
-      document.getElementById(arguments[i]).style.display = 'block'
-      document.getElementById(arguments[i]).setAttribute('data-active', 'true');
-    }
-  }
-
-  // find a sibling
-  var findSibling = function(el, tagName) {
-    console.log(el);
-    if (el.nextSibling.tagName === tagName.toUpperCase())
-      return el.nextSibling;
-    else
-      return findSibling(el.nextSibling, tagName);
-  }
-
   // enter sends name and message
   var enterKey = function() {
     var inputFields = document.getElementsByTagName('input');
@@ -64,8 +39,7 @@
       thisOne.addEventListener('keypress', function(e) {
         var key = e.which || e.keyCode;
         if (key == 13) {
-          console.log(findSibling(this.parentNode, 'div'));
-          //this.parentNode.nextSibling.nextSibling.childNodes[1].click();
+          dsHelpers.findChild(dsHelpers.findSibling(this.parentNode, 'div'), 'button').click();
         }
       });
     }
@@ -74,52 +48,76 @@
   // start things up
   var startChat = function() {
 
-    var name = document.getElementById('name').value;
-    server = io.connect(server.serverAddress);
-    server.emit('name', name);
-    show('message', 'sendmsg');
-    hide('sendname', 'name');
+    var nameInput = document.getElementById('name');
+    
+    if (dsHelpers.validateInput(nameInput)) {
 
-    // server events
-    server.on('text', function(data) {
-      insertText(data);
-    });
+      var name = nameInput.value;
+      server = io.connect(server.serverAddress);
+      server.emit('name', name);
+      dsHelpers.show('message', 'sendmsg');
+      dsHelpers.hide('sendname', 'name');
 
-    server.on('name', function(data) {
-      insertText(data, 'info');
-    });
+      // server events
+      server.on('text', function(data) {
+        insertText(data);
+      });
 
-    server.on('clientsConnected', function(num) {
-      numOfChatters(num);
-    });
+      server.on('name', function(data) {
+        insertText(data, 'info');
+      });
 
-    server.on('disconnect', function(data) {
-      insertText(data, 'danger');
-    });
+      server.on('clientsConnected', function(num) {
+        numOfChatters(num);
+      });
+
+      server.on('disconnect', function(data) {
+        insertText(data, 'danger');
+      });
+
+    } else {
+      
+      dsHelpers.showError(nameInput);
+    
+    }
 
   }
 
   var init = function() {
 
     // hide/show currect fields
-    hide('message', 'sendmsg');
-    show('sendname', 'name');
+    dsHelpers.hide('message', 'sendmsg');
+    dsHelpers.show('sendname', 'name');
 
     // list for submit on name
     document.getElementById('sendname').addEventListener('click', startChat);
 
     // listen for submit on sending message
     document.getElementById('sendmsg').addEventListener('click', function(e) {
-      var messageText = document.getElementById('message').value;
-      server.emit('text', messageText);
-      insertText('Me: ' + messageText);
-      document.getElementById('message').value = "";
+      
+      var messageInput = document.getElementById('message');
+      
+      if (dsHelpers.validateInput(messageInput)) {
+        
+        var messageText = messageInput.value;
+        server.emit('text', messageText);
+        insertText('Me: ' + messageText);
+        messageInput.style.border = 'none';
+        messageInput.value = '';
+
+      } else {
+
+        dsHelpers.showError(messageInput);
+
+      }
     });
 
+    // add ability to use enter key to send messages and input name
     enterKey();
 
   }
 
+  // lets do this!
   init();
 
 })();
