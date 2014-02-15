@@ -20,12 +20,14 @@ var clientsConnected = 0;
 io.sockets.on('connection', function(client) {
   console.log('Client connected...');
   clientsConnected++;
+  client.emit('clientsConnected', clientsConnected);
   console.log(clientsConnected + ' currently connected');
 
   // add listener to name and set it
   client.on('name', function(name) {
     client.set('name', name);
     client.broadcast.emit('name', name + ' has joined the chat');
+    client.broadcast.emit('clientsConnected', clientsConnected);
   });
 
   // add listener that broadcasts message to all clients
@@ -43,6 +45,7 @@ io.sockets.on('connection', function(client) {
     });
     console.log('Client disconnected...');
     clientsConnected--;
+    client.broadcast.emit('clientsConnected', clientsConnected);
     console.log(clientsConnected + ' currently connected');
   });
 

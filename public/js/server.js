@@ -5,4 +5,3 @@ if (document.URL.indexOf('localhost') > 0) {
 } else {
   server.serverAddress = 'http://chat.derrickshowers.com/'; 
 }
-server = io.connect(server.serverAddress);
