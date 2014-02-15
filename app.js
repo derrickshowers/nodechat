@@ -15,12 +15,17 @@ app.use('/img',express.static(path.join(__dirname, 'public/img')));
 app.use('/js',express.static(path.join(__dirname, 'public/js')));
 app.use('/css',express.static(path.join(__dirname, 'public/css')));
 
+var clientsConnected = 0;
+
 io.sockets.on('connection', function(client) {
   console.log('Client connected...');
+  clientsConnected++;
+  console.log(clientsConnected + ' currently connected');
 
   // add listener to name and set it
   client.on('name', function(name) {
     client.set('name', name);
+    client.broadcast.emit('name', name + ' has joined the chat');
   });
 
   // add listener that broadcasts message to all clients
@@ -29,6 +34,16 @@ io.sockets.on('connection', function(client) {
       client.broadcast.emit('text', name + ': ' + data );
     });
     console.log('broadcasted ', data);
+  });
+
+  // listen for disconnect
+  client.on('disconnect', function(data) {
+    client.get('name', function(err, name) {
+      client.broadcast.emit('disconnect', name + ' has left the chat');
+    });
+    console.log('Client disconnected...');
+    clientsConnected--;
+    console.log(clientsConnected + ' currently connected');
   });
 
 });
