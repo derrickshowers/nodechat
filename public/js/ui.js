@@ -35,6 +35,7 @@
   var hide = function() {
     for(var i=0; i<arguments.length; i++) {
       document.getElementById(arguments[i]).style.display = 'none'
+      document.getElementById(arguments[i]).setAttribute('data-active', 'false');
     }
   }
 
@@ -42,6 +43,27 @@
   var show = function() {
     for(var i=0; i<arguments.length; i++) {
       document.getElementById(arguments[i]).style.display = 'block'
+      document.getElementById(arguments[i]).setAttribute('data-active', 'true');
+    }
+  }
+
+  // find a sibling
+  var findSibling = function(el, tagName) {
+    console.log(this);
+  }
+
+  // enter sends name and message
+  var enterKey = function() {
+    var inputFields = document.getElementsByTagName('input');
+    for (var i=0; i<inputFields.length; i++) {
+      var thisOne = inputFields[i];
+      thisOne.addEventListener('keypress', function(e) {
+        var key = e.which || e.keyCode;
+        if (key == 13) {
+          console.log(findSibling(this, 'div'));
+          //this.parentNode.nextSibling.nextSibling.childNodes[1].click();
+        }
+      });
     }
   }
 
@@ -75,8 +97,9 @@
 
   var init = function() {
 
-    // hide the chat options on page load
+    // hide/show currect fields
     hide('message', 'sendmsg');
+    show('sendname', 'name');
 
     // list for submit on name
     document.getElementById('sendname').addEventListener('click', startChat);
@@ -88,6 +111,8 @@
       insertText('Me: ' + messageText);
       document.getElementById('message').value = "";
     });
+
+    enterKey();
 
   }
 
