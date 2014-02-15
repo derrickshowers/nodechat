@@ -49,7 +49,11 @@
 
   // find a sibling
   var findSibling = function(el, tagName) {
-    console.log(this);
+    console.log(el);
+    if (el.nextSibling.tagName === tagName.toUpperCase())
+      return el.nextSibling;
+    else
+      return findSibling(el.nextSibling, tagName);
   }
 
   // enter sends name and message
@@ -60,7 +64,7 @@
       thisOne.addEventListener('keypress', function(e) {
         var key = e.which || e.keyCode;
         if (key == 13) {
-          console.log(findSibling(this, 'div'));
+          console.log(findSibling(this.parentNode, 'div'));
           //this.parentNode.nextSibling.nextSibling.childNodes[1].click();
         }
       });
