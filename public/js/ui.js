@@ -9,7 +9,7 @@
     newText.innerHTML = '<td>' + text + '</td>';
 
     var allText = document.getElementsByTagName('tbody')[0];
-    return allText.appendChild(newText);
+    return allText.insertBefore(newText, allText.firstChild);
 
   }
 
@@ -59,7 +59,7 @@
       dsHelpers.hide('sendname', 'name');
 
       // server events
-      server.on('text', function(data) {
+      server.on('message', function(data) {
         insertText(data);
       });
 
@@ -100,7 +100,7 @@
       if (dsHelpers.validateInput(messageInput)) {
         
         var messageText = messageInput.value;
-        server.emit('text', messageText);
+        server.emit('message', messageText);
         insertText('Me: ' + messageText);
         messageInput.style.border = 'none';
         messageInput.value = '';
