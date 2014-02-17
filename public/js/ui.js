@@ -1,17 +1,16 @@
 (function() {
 
   // add loading messages
-  var toggleLoading = function() {
+  var toggleLoading = function(status) {
 
     var loadingEl = document.getElementById('loading');
 
-    if (loadingEl === null) {
+    if (loadingEl === null && status) {
       var allText = document.getElementsByTagName('tbody')[0];
       var newText = document.createElement('tr');
       newText.setAttribute('id', 'loading');
       newText.setAttribute('class', 'warning');
-      // don't judge me for this - TODO: add to a stylesheet
-      newText.innerHTML = '<td style="line-height:50px"><img height="25" width="25" alt="" src="/img/loading.gif" />Loading some stuff...</td>';
+      newText.innerHTML = '<td><img height="20" width="20" alt="" src="/img/loading.gif" />Loading some stuff...</td>';
       allText.insertBefore(newText, allText.firstChild);
     } else {
       loadingEl.remove();
@@ -72,7 +71,7 @@
     if (dsHelpers.validateInput(nameInput)) {
 
       // show loading message
-      toggleLoading();
+      toggleLoading(true);
 
       var name = nameInput.value;
       server = io.connect(server.serverAddress);
@@ -90,7 +89,8 @@
       });
 
       server.on('clientsConnected', function(num) {
-        toggleLoading();
+        // hide the loading message
+        toggleLoading(false);
         numOfChatters(num);
       });
 
