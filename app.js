@@ -1,6 +1,5 @@
 var express = require('express');
 var socket = require('socket.io');
-var path = require('path');
 var redis = require('redis-url');
 var redisClient = redis.connect('redis://redistogo:1ff658470d583528198c85be815ffccb@pearlfish.redistogo.com:9682/');
 var app = express();
@@ -8,7 +7,8 @@ var server = require('http').createServer(app);
 var io = socket.listen(server);
 
 server.listen(process.env.PORT);
-app.use('/', express.static(path.join(__dirname, 'public/')));
+app.use(express.logger());
+app.use('/', express.static(__dirname + '/public/'));
 
 var clientsConnected = 0;
 
